@@ -15,46 +15,22 @@ defmodule Util do
     |> String.trim()
   end
 
-  def ingresar(mensaje, :entero) do
-    try do
-      mensaje
-    |> Util.ingresar(:texto)
-    |> String.to_integer()
-    rescue
-      ArgumentError ->
-        "Error se espera un entero"
-        |> mostrar_error()
+  def ingresar(mensaje, :entero), do: ingresar(mensaje, &String.to_integer/1, :entero)
 
-        mensaje
-        |> ingresar(:entero)
-    end
-  end
+  def ingresar(mensaje, :real), do: ingresar(mensaje, &String.to_float/1, :real)
 
-  def ingresar(mensaje, :real) do
-    try do
-      mensaje
-    |> Util.ingresar(:texto)
-    |> String.to_float()
-    rescue
-      ArgumentError ->
-        "Error se espera un real"
-        |> mostrar_error()
 
-        mensaje
-        |> ingresar(:real)
-    end
-  end
 
 
   def mostrar_error(mensaje) do
     IO.puts(:standard_error, mensaje)
   end
 
-  def ingresar(mensaje, pasrser, tipo_dato) do
+  def ingresar(mensaje, parser, tipo_dato) do
     try do
       mensaje
       |>ingresar(:texto)
-      |>pasrser.()
+      |>parser.()
     rescue
       ArgumentError ->
         "Error, se espera un numero #{tipo_dato}\n"
