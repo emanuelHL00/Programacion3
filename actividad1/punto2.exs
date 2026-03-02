@@ -29,10 +29,10 @@ defmodule Parqueadero do
   defp calcular_tarifa(horas) do
     cond do
        horas <= 2 -> 3000
-       horas <= 5 -> 2500
-
+       horas <= 5 -> 3000 + (horas - 2) * 2500
+       horas <= 8 -> 3000  + 3 * 2500 + (horas - 5) * 2000
     end
-
   end
-
 end
+
+Parqueadero.calcular_tarifa()
