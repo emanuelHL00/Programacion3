@@ -3,7 +3,7 @@ defmodule Hotel do
 
   def tarifa_base(noches) when noches <= 2, do: 120_000
   def tarifa_base(noches) when noches <= 5, do: 100_000
-  def tarifa_base(_noches),                 do:  85_000
+  def tarifa_base(noches) when noches >= 6, do:  85_000
 
 
   def descuento(:frecuente),   do: 0.20
