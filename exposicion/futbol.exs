@@ -60,7 +60,7 @@ defmodule FutbolDB do
 
 
   def menu(db) do
-    Util.mostrar_mensaje("\n⚽ BASE DE DATOS DE FUTBOL")
+    Util.mostrar_mensaje("\n BASE DE DATOS DE FUTBOL")
 
     Util.mostrar_mensaje("1 Ver ligas")
     Util.mostrar_mensaje("2 Ver equipos")
@@ -70,7 +70,8 @@ defmodule FutbolDB do
     Util.mostrar_mensaje("6 Agregar jugador")
     Util.mostrar_mensaje("7 Ver palmares")
     Util.mostrar_mensaje("8 Buscar jugador")
-    Util.mostrar_mensaje("9 Salir")
+    Util.mostrar_mensaje("9 simula partido")
+    Util.mostrar_mensaje("10 Salir")
 
     opcion = Util.ingresar("Seleccione: ", :entero)
 
@@ -83,7 +84,8 @@ defmodule FutbolDB do
       6 -> agregar_jugador(db)
       7 -> ver_palmares(db)
       8 -> buscar_jugador(db)
-      9 -> Util.mostrar_mensaje("Adios")
+      9 -> simular_partido(db)
+      10 -> Util.mostrar_mensaje("Adios")
       _ -> menu(db)
     end
   end
@@ -163,26 +165,53 @@ defmodule FutbolDB do
     menu(db)
   end
 
+  def ingresar_jugadores(lista \\ []) do
+  jugador = Util.ingresar("Nombre del jugador (fin para terminar): ", :texto)
+
+  if String.downcase(jugador) == "fin" do
+    lista
+  else
+    ingresar_jugadores(lista ++ [jugador])
+  end
+end
+
+def ingresar_palmares(lista \\ []) do
+  titulo = Util.ingresar("Titulo (fin para terminar): ", :texto)
+
+  if String.downcase(titulo) == "fin" do
+    lista
+  else
+    cantidad = Util.ingresar("Cantidad: ", :entero)
+    ingresar_palmares(lista ++ [{titulo, cantidad}])
+  end
+end
+
 
 
   def agregar_equipo(db) do
 
-    liga = seleccionar_liga(db)
+  liga = seleccionar_liga(db)
 
-    nombre = Util.ingresar("Nombre del equipo: ", :texto)
+  nombre = Util.ingresar("Nombre del equipo: ", :texto)
 
-    nuevo = equipo(nombre, [], [])
+  Util.mostrar_mensaje("Ingrese jugadores del equipo")
+  jugadores = ingresar_jugadores()
 
-    equipos = Map.get(db, liga)
+  Util.mostrar_mensaje("Ingrese palmares del equipo")
+  palmares = ingresar_palmares()
 
-    nuevos = [nuevo | equipos]
+  nuevo = equipo(nombre, jugadores, palmares)
 
-    db = Map.put(db, liga, nuevos)
+  equipos = Map.get(db, liga)
 
-    Util.mostrar_mensaje("Equipo agregado")
+  nuevos = [nuevo | equipos]
 
-    menu(db)
-  end
+  db = Map.put(db, liga, nuevos)
+
+  Util.mostrar_mensaje("Equipo agregado")
+
+  menu(db)
+end
 
 
   def agregar_jugador(db) do
@@ -215,29 +244,35 @@ defmodule FutbolDB do
 
   def modificar_equipo(db) do
 
-    liga = seleccionar_liga(db)
+  liga = seleccionar_liga(db)
 
-    equipos = Map.get(db, liga)
+  equipos = Map.get(db, liga)
 
-    equipo = seleccionar_equipo(equipos)
+  equipo = seleccionar_equipo(equipos)
 
-    nuevo = Util.ingresar("Nuevo nombre: ", :texto)
+  nuevo_nombre = Util.ingresar("Nuevo nombre del equipo: ", :texto)
 
-    nuevos =
-      Enum.map(equipos, fn e ->
-        if e.nombre == equipo.nombre do
-          %{e | nombre: nuevo}
-        else
-          e
-        end
-      end)
+  Util.mostrar_mensaje("Ingrese los nuevos jugadores")
+  jugadores = ingresar_jugadores()
 
-    db = Map.put(db, liga, nuevos)
+  Util.mostrar_mensaje("Ingrese el nuevo palmares")
+  palmares = ingresar_palmares()
 
-    Util.mostrar_mensaje("Equipo modificado")
+  nuevos =
+    Enum.map(equipos, fn e ->
+      if e.nombre == equipo.nombre do
+        equipo(nuevo_nombre, jugadores, palmares)
+      else
+        e
+      end
+    end)
 
-    menu(db)
-  end
+  db = Map.put(db, liga, nuevos)
+
+  Util.mostrar_mensaje("Equipo modificado")
+
+  menu(db)
+end
 
 
 
@@ -282,6 +317,36 @@ defmodule FutbolDB do
 
     menu(db)
   end
+
+  def simular_partido(db) do
+
+  liga = seleccionar_liga(db)
+
+  equipos = Map.get(db, liga)
+
+  Util.mostrar_mensaje("Seleccione el primer equipo")
+  equipo1 = seleccionar_equipo(equipos)
+
+  Util.mostrar_mensaje("Seleccione el segundo equipo")
+  equipo2 = seleccionar_equipo(equipos)
+
+  goles1 = Util.ingresar("Goles de #{equipo1.nombre}: ", :entero)
+  goles2 = Util.ingresar("Goles de #{equipo2.nombre}: ", :entero)
+
+  Util.mostrar_mensaje("#{equipo1.nombre} #{goles1} - #{goles2} #{equipo2.nombre}")
+
+  if goles1 > goles2 do
+    Util.mostrar_mensaje("Ganador: #{equipo1.nombre}")
+  else
+    if goles2 > goles1 do
+      Util.mostrar_mensaje("Ganador: #{equipo2.nombre}")
+    else
+      Util.mostrar_mensaje("Empate")
+    end
+  end
+
+  menu(db)
+end
 
 end
 
