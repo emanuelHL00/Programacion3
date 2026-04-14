@@ -306,7 +306,7 @@ end
     |> Enum.each(fn {liga,equipos} ->
 
       Enum.each(equipos, fn equipo ->
-
+        
         if String.downcase(jugador) in equipo.jugadores do
           Util.mostrar_mensaje("#{jugador} juega en #{equipo.nombre} (#{liga})")
         end
