@@ -7,17 +7,15 @@ defmodule Punto4 do
     IO.puts(mas_larga(lista))
   end
 
+  def mas_larga([h]), do: h
+
   def mas_larga([h | t]) do
-    buscar(t, h)
-  end
+    resto = mas_larga(t)
 
-  defp buscar([], mayor), do: mayor
-
-  defp buscar([h | t], mayor) do
-    if String.length(h) > String.length(mayor) do
-      buscar(t, h)
+    if String.length(h) > String.length(resto) do
+      h
     else
-      buscar(t, mayor)
+      resto
     end
   end
 
