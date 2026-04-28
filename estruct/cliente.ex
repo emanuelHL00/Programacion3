@@ -54,17 +54,10 @@ defmodule Cliente do
   end
 
   def escribir_csv(clientes, nombre) do
-    contenido =
-      clientes
-      |> generar_mensaje_clientes(&convertir_cliente_linea_csv/1)
-
-    case File.exists?(nombre) do
-      true ->
-        File.write(nombre, contenido <> "\n", [:append])
-
-      false ->
-        File.write(nombre, "nombre, edad, altura\n" <> contenido <> "\n")
-    end
+    clientes
+    |>generar_mensaje_clientes(&convertir_cliente_linea_csv/1)
+    |>(&("nombre, edad, altura\n" <> &1)).()
+    |>(&File.write(nombre, &1)).()
   end
 
   defp convertir_cliente_linea_csv(cliente) do
