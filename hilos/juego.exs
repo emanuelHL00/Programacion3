@@ -22,9 +22,8 @@ defmodule Juego do
   def jugar(jugador) do
     tiempo = :rand.uniform(1500)
     Process.sleep(tiempo)
-
+    
     puntos = :rand.uniform(100)
-
     "#{jugador} consiguió #{puntos} puntos en #{tiempo} ms"
   end
 
