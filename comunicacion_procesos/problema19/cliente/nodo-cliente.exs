@@ -1,7 +1,7 @@
 defmodule NodoCliente do
   @nombre_servicio_local :servicio_respuesta
-  @servicio_local {@nombre_servicio_local, :nodocliente@cliente}
-  @nodo_remoto :nodoservidor@localhost
+  @servicio_local {@nombre_servicio_local, :"nodocliente@172.24.88.196"}
+  @nodo_remoto :"nodoservidor@172.24.88.22"
   @servicio_remoto {:servicio_cadenas, @nodo_remoto}
 
   @mensajes [
